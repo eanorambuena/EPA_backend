@@ -17,7 +17,9 @@ app.use((ctx, next) => {
     ctx.body = 'Hello World';
 });
 
-app.listen(3000, () => {console.log('Server running on http://localhost:3000')
-});
+// app.listen(3000, () => {console.log('Server running on http://localhost:3000')
+// });
 
 console.log('Hello World')
+
+module.exports = app;
