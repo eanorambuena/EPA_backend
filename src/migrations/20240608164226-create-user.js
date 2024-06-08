@@ -22,9 +22,7 @@ module.exports = {
             if (value.length < 8) {
               throw new Error('Password must be at least 8 characters');
             }
-            if (!value.match(/[a-z]||[A-Z]/) || !value.match(/[0-9]/)) {
-              throw new Error('Password must contain letters and numbers');
-            }
+          }
         }
       },
       type: {
