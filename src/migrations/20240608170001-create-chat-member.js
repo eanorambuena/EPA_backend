@@ -14,17 +14,20 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id'
-        }
+        },
+        allowNull: false,
       },
       chatId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Chats',
           key: 'id'
-        }
+        },
+        allowNull: false,
       },
       role: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
