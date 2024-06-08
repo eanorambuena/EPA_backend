@@ -17,10 +17,15 @@ module.exports = {
         }
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          isEmail: {
+            msg: 'Invalid email format'}
+        }
       },
       status: {
         type: Sequelize.STRING
