@@ -12,6 +12,12 @@ module.exports = {
       nickname: {
         type: Sequelize.STRING
       },
+      userBase: {
+        type: Sequelize.INTEGER
+      },
+      userContact: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
