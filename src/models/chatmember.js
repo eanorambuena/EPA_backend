@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     chatId: DataTypes.INTEGER,
     role: DataTypes.ENUM = {
-      ADMIN: 'admin',
+      OWNER: 'owner',
       MEMBER: 'member'
     }
   }, {
