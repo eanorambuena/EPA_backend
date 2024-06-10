@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'id',
         as: 'messages'
       });
+      this.hasMany(models.ChatMember, {
+        foreignKey: 'id',
+        as: 'chatMembers'
+      });
       User.hasMany(models.Contact, { as: 'UserBase', foreignKey: 'userBase' });
       User.hasMany(models.Contact, { as: 'UserContact', foreignKey: 'userContact' });
     }
