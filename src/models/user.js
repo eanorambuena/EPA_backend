@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     phoneNumber: DataTypes.STRING,
     password: DataTypes.STRING,
-    type: DataTypes.STRING
+    type: DataTypes.ENUM = ['admin', 'user'],
   }, {
     sequelize,
     modelName: 'User',
