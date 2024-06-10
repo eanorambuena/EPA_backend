@@ -3,7 +3,7 @@ module.exports = {
     {
       chatId: 1,
       userId: 1,
-      role: 'owner',
+      role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -24,7 +24,7 @@ module.exports = {
     {
       chatId: 2,
       userId: 2,
-      role: 'owner',
+      role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date(),
     },

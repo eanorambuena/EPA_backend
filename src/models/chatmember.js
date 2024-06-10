@@ -23,7 +23,10 @@ module.exports = (sequelize, DataTypes) => {
   ChatMember.init({
     userId: DataTypes.INTEGER,
     chatId: DataTypes.INTEGER,
-    role: DataTypes.STRING
+    role: DataTypes.ENUM = {
+      ADMIN: 'admin',
+      MEMBER: 'member'
+    }
   }, {
     sequelize,
     modelName: 'ChatMember',
