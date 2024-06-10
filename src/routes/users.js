@@ -71,7 +71,7 @@ router.del("users.delete", "/:id", async (ctx) => {
         ctx.body = error;
         ctx.status = 500;
     }
-    }
-);
+    
+});
 
 module.exports = router;
