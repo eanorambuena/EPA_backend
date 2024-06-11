@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   Message.init({
     userId: DataTypes.INTEGER,
     chatId: DataTypes.INTEGER,
-    state: DataTypes.STRING,
+    state: DataTypes.ENUM('sent', 'received', 'read'),
     content: DataTypes.STRING,
     date: DataTypes.DATE
   }, {
