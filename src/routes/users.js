@@ -29,7 +29,7 @@ router.get("users.show", "/:id", async (ctx) => {
     }
     });
 
-router.post("users.create", "", async (ctx) => {
+router.post("users.create", "/", async (ctx) => {
     try {
         const user = await ctx.orm.User.create(ctx.request.body);
         ctx.body = user;
