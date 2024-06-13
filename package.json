@@ -13,6 +13,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@koa/cors": "^5.0.0",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "koa": "2.15.3",
