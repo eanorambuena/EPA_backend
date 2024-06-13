@@ -1,9 +1,4 @@
-class MissingFieldsException extends Error {
-  constructor(missingFields) {
-    super(`Missing fields: ${missingFields.join(', ')}`)
-    this.name = 'MissingFieldsException'
-  }
-}
+const { MissingFieldsException } = require('./errors')
 
 function assertRequiredFields(data, requiredFields) {
   if (!data) {
