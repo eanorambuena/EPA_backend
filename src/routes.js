@@ -1,15 +1,13 @@
 const Router = require('koa-router')
-const auth = require('./routes/auth')
-const Users = require('./routes/users.js')
-const Messages = require('./routes/messages.js')
+const SignUp = require('./routes/signup')
+const Login = require('./routes/login')
+const Users = require('./routes/users')
+const Messages = require('./routes/messages')
 
 const router = new Router()
 
-router.get('/', async (ctx) => {
-  ctx.body = 'Hello World'
-})
-
-router.use('/auth', auth.routes())
+router.use('/signup', SignUp.routes())
+router.use('/login', Login.routes())
 router.use('/users', Users.routes())
 router.use('/messages', Messages.routes())
 

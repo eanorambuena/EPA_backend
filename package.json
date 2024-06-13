@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon src/index.js --watch src",
     "lint": "eslint . --fix"
   },
   "dependencies": {

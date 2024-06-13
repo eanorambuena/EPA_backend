@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -15,7 +15,7 @@ module.exports = {
           model: 'Users',
           key: 'id'
         },
-        allowNull: false,
+        allowNull: false
       },
       chatId: {
         type: Sequelize.INTEGER,
@@ -23,11 +23,11 @@ module.exports = {
           model: 'Chats',
           key: 'id'
         },
-        allowNull: false,
+        allowNull: false
       },
       role: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -37,9 +37,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('ChatMembers');
+    await queryInterface.dropTable('ChatMembers')
   }
-};
+}

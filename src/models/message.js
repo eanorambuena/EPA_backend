@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Message extends Model {
     /**
@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         foreignKey: 'userId',
         as: 'user'
-      });
+      })
       this.belongsTo(models.Chat, {
         foreignKey: 'chatId',
         as: 'chat'
-      });
+      })
     }
   }
   Message.init({
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     date: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'Message',
-  });
-  return Message;
-};
+    modelName: 'Message'
+  })
+  return Message
+}
