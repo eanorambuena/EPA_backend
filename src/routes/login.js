@@ -26,9 +26,9 @@ router.post('/', async (ctx) => {
       { expiresIn: expirationSeconds }
     )
     ctx.body = {
-      'access_token': token,
-      'token_type': 'Bearer',
-      'expires_in': expirationSeconds
+      access_token: token,
+      token_type: 'Bearer',
+      expires_in: expirationSeconds
     }
     ctx.status = 200
   }
