@@ -1,5 +1,5 @@
 module.exports = {
-  up: async (queryInterface) => queryInterface.bulkInsert('Profiles', [
+  up: async queryInterface => queryInterface.bulkInsert('Profiles', [
     {
       username: 'Alex',
       email: 'alex@gmail.com',
@@ -7,7 +7,7 @@ module.exports = {
       description: 'I am a software engineer',
       userId: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       username: 'John',
@@ -16,7 +16,7 @@ module.exports = {
       description: 'I am an old man',
       userId: 2,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       username: 'Jane',
@@ -25,9 +25,9 @@ module.exports = {
       description: 'I am a young lady',
       userId: 3,
       createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+      updatedAt: new Date()
+    }
 
   ]),
-  down: async (queryInterface) => queryInterface.bulkDelete('Profiles', null, {}),
-};
+  down: async queryInterface => queryInterface.bulkDelete('Profiles', null, {})
+}

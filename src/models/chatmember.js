@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class ChatMember extends Model {
     /**
@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         foreignKey: 'userId',
         as: 'user'
-      });
+      })
       this.belongsTo(models.Chat, {
         foreignKey: 'chatId',
         as: 'chat'
-      });
+      })
     }
   }
   ChatMember.init({
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     role: DataTypes.ENUM('owner', 'member')
   }, {
     sequelize,
-    modelName: 'ChatMember',
-  });
-  return ChatMember;
-};
+    modelName: 'ChatMember'
+  })
+  return ChatMember
+}

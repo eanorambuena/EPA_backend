@@ -1,77 +1,40 @@
-const Router = require('koa-router');
+const Router = require('koa-router')
+const { isAdmin } = require('../middleware/jwt')
+const { safelyGetUsers, safelyGetUser, safelyDo } = require('../services/safely')
+const { assertRequiredFields } = require('../services/assertRequiredFields')
 
-const router = new Router();
+const router = new Router()
 
-router.get("users.list", "/", async (ctx) => {
-    try {
-        const users = await ctx.orm.User.findAll();
-        ctx.body = users;
-        ctx.status = 200;
-    } catch (error) {
-        console.log(error);
-        ctx.body = error;
-        ctx.status = 500;
-    }
-    });
+router.get('users.list', '/', isAdmin, async ctx => safelyDo(ctx, async (ctx) => {
+  const users = await safelyGetUsers(ctx)
+  ctx.body = users
+  ctx.status = 200
+}))
 
-router.get("users.show", "/:id", async (ctx) => {
-    try {
-        const user = await ctx.orm.User.findByPk(ctx.params.id);
-        if (!user) {
-            ctx.throw(404);
-        }
-        ctx.body = user;
-        ctx.status = 200;
-    } catch (error) {
-        console.log(error);
-        ctx.body = error;
-        ctx.status = 500;
-    }
-    });
+router.get('users.show', '/:id', isAdmin, async ctx => safelyDo(ctx, async (ctx) => {
+  const user = await safelyGetUser(ctx, ctx.params.id)
+  ctx.body = user
+  ctx.status = 200
+}))
 
-router.post("users.create", "/", async (ctx) => {
-    try {
-        const user = await ctx.orm.User.create(ctx.request.body);
-        ctx.body = user;
-        ctx.status = 201;
-    } catch (error) {
-        console.log(error);
-        ctx.body = error;
-        ctx.status = 400;
-    }
-    });
+router.post('users.create', '', isAdmin, async ctx => safelyDo(ctx, async (ctx) => {
+  await assertRequiredFields(ctx.request.body, ['phoneNumber', 'password', 'type'])
+  const user = await ctx.orm.User.create(ctx.request.body)
+  ctx.body = user
+  ctx.status = 201
+}))
 
-router.put("users.update", "/:id", async (ctx) => {
-    try {
-        const user = await ctx.orm.User.findByPk(ctx.params.id);
-        if (!user) {
-            ctx.throw(404);
-        }
-        await user.update(ctx.request.body);
-        ctx.body = user;
-        ctx.status = 200;
-    } catch (error) {
-        console.log(error);
-        ctx.body = error;
-        ctx.status = 500;
-    }
-    }
-);
+router.put('users.update', '/:id', isAdmin, async ctx => safelyDo(ctx, async (ctx) => {
+  const user = await safelyGetUser(ctx, ctx.params.id)
+  await user.update(ctx.request.body)
+  ctx.body = user
+  ctx.status = 200
+}))
 
-router.del("users.delete", "/:id", async (ctx) => {
-    try {
-        const user = await ctx.orm.User.findByPk(ctx.params.id);
-        if (!user) {
-            ctx.throw(404);
-        }
-        await user.destroy();
-        ctx.status = 204;
-    } catch (error) {
-        console.log(error);
-        ctx.body = error;
-        ctx.status = 500;
-    }
-    
-});
+router.del('users.delete', '/:id', isAdmin, async ctx => safelyDo(ctx, async (ctx) => {
+  const user = await safelyGetUser(ctx, ctx.params.id)
+  await user.destroy()
+  ctx.status = 204
+}))
 
-module.exports = router;
+module.exports = router

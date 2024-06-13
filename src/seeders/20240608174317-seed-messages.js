@@ -1,5 +1,5 @@
 module.exports = {
-  up: async (queryInterface) => queryInterface.bulkInsert('Messages', [
+  up: async queryInterface => queryInterface.bulkInsert('Messages', [
     {
       content: 'Hi, how are you?',
       chatId: 1,
@@ -7,7 +7,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'I am fine, thank you',
@@ -16,7 +16,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'What are you doing?',
@@ -25,7 +25,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'I am working',
@@ -34,7 +34,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'Hi, how are you?',
@@ -43,7 +43,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'I am fine, thank you',
@@ -52,7 +52,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'What are you doing?',
@@ -61,7 +61,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'I am working',
@@ -70,7 +70,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'What are you talking without me?',
@@ -79,7 +79,7 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     },
     {
       content: 'Read the previous messages',
@@ -88,8 +88,8 @@ module.exports = {
       state: 'sent',
       date: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     }
   ]),
-  down: async (queryInterface) => queryInterface.bulkDelete('Messages', null, {}),
-};
+  down: async queryInterface => queryInterface.bulkDelete('Messages', null, {})
+}
