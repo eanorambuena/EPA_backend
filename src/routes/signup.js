@@ -7,8 +7,8 @@ const router = new Router()
 router.post('/', async (ctx) => {
   ctx.type = 'application/json'
   try {
-    const { phoneNumber, password } = ctx.request.body
     assertRequiredFields(ctx.request.body, ['phoneNumber', 'password'])
+    const { phoneNumber, password } = ctx.request.body
     let user = await User.findOne({ where: { phoneNumber } })
     if (user) {
       ctx.status = 400
@@ -20,13 +20,14 @@ router.post('/', async (ctx) => {
     ctx.body = { message: 'User created' }
   }
   catch (error) {
-    ctx.status = 500
     if (error instanceof MissingFieldsException) {
       ctx.body = { error: error.message }
+      ctx.status = 400
       return
     }
     console.error(error)
     ctx.body = { error: 'Internal server error' }
+    ctx.status = 500
   }
 })
 

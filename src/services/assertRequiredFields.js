@@ -6,6 +6,9 @@ class MissingFieldsException extends Error {
 }
 
 function assertRequiredFields(data, requiredFields) {
+  if (!data) {
+    throw new MissingFieldsException(requiredFields)
+  }
   const missingFields = []
   requiredFields.forEach((field) => {
     if (!data[field]) {
