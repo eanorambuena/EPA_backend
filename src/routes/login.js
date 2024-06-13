@@ -18,7 +18,7 @@ router.post('/', async (ctx) => {
       return
     }
     const expirationSeconds = 1 * 60 * 60 * 24
-    const JWT_PRIVATE_KEY = process.env.JWT_SECRET ?? 'secret'
+    const JWT_PRIVATE_KEY = process.env.JWT_SECRET
     const token = jwt.sign(
       { scope: [user.type] },
       JWT_PRIVATE_KEY,
