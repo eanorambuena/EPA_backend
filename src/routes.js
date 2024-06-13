@@ -1,10 +1,10 @@
 const Router = require('koa-router')
-const Users = require('./routes/users.js')
-const Contacts = require('./routes/contacts.js')
+const Users = require('./routes/admin/users.js')
+const Contacts = require('./routes/admin/contacts.js')
 const SignUp = require('./routes/signup')
 const Login = require('./routes/login')
 const Me = require('./routes/me')
-const Messages = require('./routes/messages')
+const Messages = require('./routes/admin/messages.js')
 const jwtMiddleware = require('koa-jwt')
 
 const router = new Router()
