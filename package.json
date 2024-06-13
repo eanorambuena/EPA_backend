@@ -13,8 +13,10 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "axios": "^1.7.2",
     "dotenv": "^16.4.5",
-    "koa": "2.15.3",
+    "koa": "^2.15.3",
     "koa-body": "^6.0.1",
     "koa-logger": "^3.2.1",
     "koa-router": "^12.0.1",
