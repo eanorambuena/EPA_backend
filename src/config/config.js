@@ -1,6 +1,6 @@
-const dotenv = require('dotenv');
+const dotenv = require('dotenv')
 
-dotenv.config();
+dotenv.config()
 
 module.exports = {
   development: {
@@ -42,4 +42,4 @@ module.exports = {
       }
     }
   }
-};
+}

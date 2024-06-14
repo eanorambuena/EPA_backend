@@ -11,7 +11,7 @@ app.context.orm = orm
 
 app.use(KoaLogger())
 app.use(koaBody())
-app.use(cors());
+app.use(cors())
 
 app.use(router.routes())
 
