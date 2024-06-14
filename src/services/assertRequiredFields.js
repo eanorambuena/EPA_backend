@@ -1,8 +1,8 @@
-const { MissingFieldsException } = require('./errors')
+const { MissingFieldsError } = require('./errors')
 
 function assertRequiredFields(data, requiredFields) {
   if (!data) {
-    throw new MissingFieldsException(requiredFields)
+    throw new MissingFieldsError(requiredFields)
   }
   const missingFields = []
   requiredFields.forEach((field) => {
@@ -11,11 +11,10 @@ function assertRequiredFields(data, requiredFields) {
     }
   })
   if (missingFields.length) {
-    throw new MissingFieldsException(missingFields)
+    throw new MissingFieldsError(missingFields)
   }
 }
 
 module.exports = {
-  MissingFieldsException,
   assertRequiredFields
 }
