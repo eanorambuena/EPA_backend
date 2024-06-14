@@ -5,13 +5,13 @@ const { assertRequiredFields } = require('../../services/assertRequiredFields')
 
 const router = new Router()
 
-router.get('users.list', '/', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
+router.get('users.list', '/', async ctx => Safely.Do(ctx, async (ctx) => {
   const users = await Safely.GetUsers(ctx)
   ctx.body = users
   ctx.status = 200
 }))
 
-router.get('users.show', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
+router.get('users.show', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
   const user = await Safely.GetUser(ctx, ctx.params.id)
   ctx.body = user
   ctx.status = 200
