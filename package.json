@@ -9,7 +9,9 @@
   "license": "MIT",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js --watch src",
+    "watch": "nodemon src/index.js --watch src",
+    "db:start": "sudo service postgresql start",
+    "dev": "npm run db:start && npm run watch",
     "lint": "eslint . --fix"
   },
   "dependencies": {
