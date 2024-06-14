@@ -21,14 +21,39 @@ module.exports = class Safely {
   static async GetChat(ctx, id) {
     const chat = await ctx.orm.Chat.findByPk(id)
     const user = await this.GetCurrentUser(ctx)
-    const chatmember = await ctx.orm.Chatmember.findOne({ where: { chatId: id, userId: user.id } })
-    if (!chatmember && !this.IsAdmin(user)) {
+    const isChatMember = await this.IsChatMember(ctx, user, id)
+    if (!isChatMember && !this.IsAdmin(user)) {
       throw new AuthorizationError()
     }
     if (!chat) {
       throw new ItemNotFoundError('Chat')
     }
     return chat
+  }
+
+  static async GetChatMessages(ctx, chatId) {
+    const messages = await ctx.orm.Message.findAll({ where: { chatId } })
+    const user = await this.GetCurrentUser(ctx)
+    const isChatMember = await this.IsChatMember(ctx, user, chatId)
+    if (!isChatMember) {
+      throw new AuthorizationError()
+    }
+    if (!messages) {
+      throw new ItemNotFoundError('Message')
+    }
+    return messages
+  }
+
+  static async GetChats(ctx) {
+    const user = await this.GetCurrentUser(ctx)
+    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { userId: user.id } })
+    const chatIds = chatMembers.map(chatmember => chatmember.chatId)
+    const chats = []
+    for (let i = 0; i < chatIds.length; i++) {
+      const chat = await ctx.orm.Chat.findByPk(chatIds[i])
+      chats.push(chat)
+    }
+    return chats
   }
 
   static async GetCurrentUser(ctx) {
@@ -57,5 +82,9 @@ module.exports = class Safely {
 
   static IsAdmin(user) {
     return user.type === 'admin'
+  }
+
+  static async IsChatMember(ctx, user, chatId) {
+    return !!await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
   }
 }
