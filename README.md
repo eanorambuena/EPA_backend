@@ -22,7 +22,7 @@ Response:
 ]
 ```
 ### Get a single user
-Puedes encontrar un determinado usuario agregando <id> como parámetro: /users/<id>
+Puedes encontrar un determinado usuario agregando <id> como parámetro: /users/id
 ```
 [GET] https://epa-backend-1.onrender.com/users/22
 ```
@@ -37,7 +37,7 @@ Response:
 }
 ```
 ### Delete a user
-Para eliminar un usuario debes agregar id como parámetro:/users/<id>
+Para eliminar un usuario debes agregar id como parámetro: /users/id
 ```
 [DELETE] https://epa-backend-1.onrender.com/users/22
 ```
