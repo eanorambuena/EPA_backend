@@ -36,6 +36,15 @@ Response:
     "updatedAt": "2024-06-14T20:47:36.226Z"
 }
 ```
+### Delete a user
+Para eliminar un usuario debes agregar id como parámetro:/users/<id>
+```
+[DELETE] https://epa-backend-1.onrender.com/users/22
+```
+Response:
+```
+true
+```
 ### Create a user
 Puedes crear un nuevo usuario utilizando /signup endpoint. En la respuesta no se incluye la información del usuario, sólo se incluye un mensaje de confirmación, manteniendo la privacidad de los datos del usuario.
 ```
