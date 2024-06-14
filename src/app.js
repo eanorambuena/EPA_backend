@@ -10,7 +10,6 @@ const app = new Koa()
 
 app.context.orm = orm
 
-app.use(cors())
 app.use(KoaLogger())
 app.use(koaBody())
 app.use(cors());
