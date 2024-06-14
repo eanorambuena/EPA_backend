@@ -2,7 +2,6 @@ const Router = require('koa-router')
 const Safely = require('../../services/safely')
 const { assertRequiredFields } = require('../../services/assertRequiredFields')
 const { isAdmin } = require('../../middleware/jwt')
-const { ItemNotFoundException } = require('../../services/errors')
 
 const router = new Router()
 
@@ -12,15 +11,8 @@ router.get('messages.list', '', isAdmin, async ctx => Safely.Do(ctx, async (ctx)
   ctx.status = 200
 }))
 
-router.get('messages.chatlist', '/:chatid', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
-  const messages = await ctx.state.db.Message.findAll({
-    where: {
-      chatId: ctx.params.chatid
-    }
-  })
-  if (!messages) {
-    throw new ItemNotFoundException('Message')
-  }
+router.get('messages.chatlist', '/:chatid', async ctx => Safely.Do(ctx, async (ctx) => {
+  const messages = await Safely.GetChatMessages(ctx, ctx.params.chatid)
   ctx.body = messages
   ctx.status = 200
 }))

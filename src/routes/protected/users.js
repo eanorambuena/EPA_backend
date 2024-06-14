@@ -37,4 +37,10 @@ router.del('users.delete', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (c
   ctx.status = 204
 }))
 
+router.get('users.chats', '/:id/chats', async ctx => Safely.Do(ctx, async (ctx) => {
+  const chats = await Safely.GetChats(ctx)
+  ctx.body = chats
+  ctx.status = 200
+}))
+
 module.exports = router
