@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const { User } = require('../models')
 const { assertRequiredFields } = require('../services/assertRequiredFields')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 const Safely = require('../services/safely')
 const { sendJwt } = require('../services/createJwt')
 
@@ -15,9 +15,8 @@ router.post('/', async ctx => Safely.Do(ctx, async (ctx) => {
 
   const user = await User.findOne({ where: { phoneNumber: phoneNumber } })
 
-  const validPassword = await bcrypt.compare(password,user.password)
+  const validPassword = await bcrypt.compare(password, user.password)
 
-  
   if (!validPassword) {
     ctx.body = { error: 'Invalid credentials' }
     ctx.status = 401
