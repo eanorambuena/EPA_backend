@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const Safely = require('../services/safely')
+const Safely = require('../../services/safely')
 
 const router = new Router()
 
