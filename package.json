@@ -10,8 +10,9 @@
   "scripts": {
     "start": "node src/index.js",
     "watch": "nodemon src/index.js --watch src",
+    "db:setup": "yarn sequelize-cli db:drop && yarn sequelize-cli db:create && yarn sequelize-cli db:migrate && yarn sequelize-cli db:seed:all",
     "db:start": "sudo service postgresql start",
-    "dev": "npm run db:start && npm run watch",
+    "dev": "yarn run db:start && yarn run watch",
     "lint": "eslint . --fix"
   },
   "dependencies": {
