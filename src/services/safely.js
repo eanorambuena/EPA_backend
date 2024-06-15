@@ -127,14 +127,25 @@ module.exports = class Safely {
   }
 
   static async DelUser(ctx, id) {
-    const user = await ctx.orm.User.findByPk(id)
+    const user = await this.GetUser(ctx, id)
     if (!user) {
       throw new ItemNotFoundError('User')
     }
-    if (!this.IsAdmin(ctx.state.user) && user.id !== ctx.state.user.id) {
+    const currentUser = await this.GetCurrentUser(ctx)
+    if (!currentUser) {
+      throw new AuthenticationError()
+    }
+    if (!this.IsAdmin(ctx.state.user) && user.id !== currentUser.id) {
       throw new AuthorizationError()
     }
-    await user.destroy()
+    const profile = await ctx.orm.Profile.findOne({ where: { userId: user.id } })
+    if (profile) {
+      const profileResponse = await profile.destroy()
+      if (!profileResponse) {
+        throw new ApplicationError('Could not delete profile', 500)
+      }
+    }
+    return await user.destroy()
   }
 
   static async GetCurrentUser(ctx) {

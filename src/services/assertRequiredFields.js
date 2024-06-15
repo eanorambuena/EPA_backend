@@ -4,6 +4,7 @@ function assertRequiredFields(data, requiredFields) {
   if (!data) {
     throw new MissingFieldsError(requiredFields)
   }
+  console.log(data)
   const missingFields = []
   requiredFields.forEach((field) => {
     if (!data[field]) {
