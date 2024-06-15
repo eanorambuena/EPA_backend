@@ -4,7 +4,7 @@ module.exports = {
   up: async queryInterface => queryInterface.bulkInsert('Users', [
     {
       phoneNumber: '+56912345678',
-      password: await bcrypt.hash('safePassword', 10),
+      password: await bcrypt.hash('safePassword1', 10),
       type: 'admin',
       createdAt: new Date(),
       updatedAt: new Date()
