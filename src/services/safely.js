@@ -126,6 +126,28 @@ module.exports = class Safely {
     await contact.destroy()
   }
 
+  static async DelUser(ctx, id) {
+    const user = await this.GetUser(ctx, id)
+    if (!user) {
+      throw new ItemNotFoundError('User')
+    }
+    const currentUser = await this.GetCurrentUser(ctx)
+    if (!currentUser) {
+      throw new AuthenticationError()
+    }
+    if (!this.IsAdmin(ctx.state.user) && user.id !== currentUser.id) {
+      throw new AuthorizationError()
+    }
+    const profile = await ctx.orm.Profile.findOne({ where: { userId: user.id } })
+    if (profile) {
+      const profileResponse = await profile.destroy()
+      if (!profileResponse) {
+        throw new ApplicationError('Could not delete profile', 500)
+      }
+    }
+    return await user.destroy()
+  }
+
   static async GetCurrentUser(ctx) {
     const user = await ctx.orm.User.findByPk(ctx.state.user.sub)
     if (!user) {

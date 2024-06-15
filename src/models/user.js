@@ -12,15 +12,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasOne(models.Profile, {
         foreignKey: 'id',
-        as: 'profile'
+        as: 'profile',
+        onDelete: 'CASCADE'
       })
       this.hasMany(models.Message, {
         foreignKey: 'id',
-        as: 'messages'
+        as: 'messages',
+        onDelete: 'CASCADE'
       })
       this.hasMany(models.ChatMember, {
         foreignKey: 'id',
-        as: 'chatMembers'
+        as: 'chatMembers',
+        onDelete: 'CASCADE'
       })
       User.hasMany(models.Contact, { as: 'UserBase', foreignKey: 'userBase' })
       User.hasMany(models.Contact, { as: 'UserContact', foreignKey: 'userContact' })

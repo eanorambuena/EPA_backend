@@ -24,16 +24,15 @@ router.post('users.create', '', isAdmin, async ctx => Safely.Do(ctx, async (ctx)
   ctx.status = 201
 }))
 
-router.put('users.update', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
+router.put('users.update', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
   const user = await Safely.GetUser(ctx, ctx.params.id)
   await user.update(ctx.request.body)
   ctx.body = user
   ctx.status = 200
 }))
 
-router.del('users.delete', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
-  const user = await Safely.GetUser(ctx, ctx.params.id)
-  await user.destroy()
+router.del('users.delete', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
+  ctx.body = await Safely.DelUser(ctx, ctx.params.id)
   ctx.status = 204
 }))
 
