@@ -31,6 +31,16 @@ module.exports = class Safely {
     return chat
   }
 
+  static async GetChatMembers(ctx, chatId) {
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new AuthorizationError()
+    }
+    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    chatMembers.map(chatMember => chatMember.password = undefined)
+    return chatMembers
+  }
+
   static async GetChatMessages(ctx, chatId) {
     const messages = await ctx.orm.Message.findAll({ where: { chatId } })
     const user = await this.GetCurrentUser(ctx)

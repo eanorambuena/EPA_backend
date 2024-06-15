@@ -15,7 +15,6 @@ router.get('profiles.list', '/', isAdmin, async ctx => Safely.Do(ctx, async (ctx
 router.get('profiles.show', '/:userId', async ctx => Safely.Do(ctx, async (ctx) => {
   const profile = await ctx.orm.Profile.findOne({ where: { userId: ctx.params.userId } })
   if (!profile) {
-    console.log('Profile not found userId:', ctx.params.userId)
     throw new ItemNotFoundError('Profile')
   }
   ctx.body = profile
