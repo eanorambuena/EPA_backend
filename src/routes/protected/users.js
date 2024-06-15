@@ -32,8 +32,7 @@ router.put('users.update', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (c
 }))
 
 router.del('users.delete', '/:id', isAdmin, async ctx => Safely.Do(ctx, async (ctx) => {
-  const user = await Safely.GetUser(ctx, ctx.params.id)
-  await user.destroy()
+  ctx.body = await Safely.DelUser(ctx, ctx.params.id)
   ctx.status = 204
 }))
 
