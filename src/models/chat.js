@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Chat.init({
-    title: DataTypes.STRING
+    title: DataTypes.STRING,
+    image: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Chat'

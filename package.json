@@ -10,14 +10,15 @@
   "scripts": {
     "start": "node src/index.js",
     "watch": "nodemon src/index.js --watch src",
+    "db:setup": "yarn sequelize-cli db:drop && yarn sequelize-cli db:create && yarn sequelize-cli db:migrate && yarn sequelize-cli db:seed:all",
     "db:start": "sudo service postgresql start",
-    "dev": "npm run db:start && npm run watch",
+    "dev": "yarn run db:start && yarn run watch",
     "lint": "eslint . --fix"
   },
   "dependencies": {
     "@koa/cors": "5.0.0",
     "axios": "1.7.2",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "5.1.1",
     "dotenv": "16.4.5",
     "jsonwebtoken": "9.0.2",
     "koa": "2.15.3",

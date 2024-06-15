@@ -22,13 +22,23 @@ module.exports = class Safely {
     const chat = await ctx.orm.Chat.findByPk(id)
     const user = await this.GetCurrentUser(ctx)
     const isChatMember = await this.IsChatMember(ctx, user, id)
-    if (!isChatMember && !this.IsAdmin(user)) {
+    if (!isChatMember) {
       throw new AuthorizationError()
     }
     if (!chat) {
       throw new ItemNotFoundError('Chat')
     }
     return chat
+  }
+
+  static async GetChatMembers(ctx, chatId) {
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new AuthorizationError()
+    }
+    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    chatMembers.map(chatMember => chatMember.password = undefined)
+    return chatMembers
   }
 
   static async GetChatMessages(ctx, chatId) {
@@ -48,12 +58,7 @@ module.exports = class Safely {
     const user = await this.GetCurrentUser(ctx)
     const chatMembers = await ctx.orm.ChatMember.findAll({ where: { userId: user.id } })
     const chatIds = chatMembers.map(chatmember => chatmember.chatId)
-    const chats = []
-    for (let i = 0; i < chatIds.length; i++) {
-      const chat = await ctx.orm.Chat.findByPk(chatIds[i])
-      chats.push(chat)
-    }
-    return chats
+    return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
   static async GetCurrentUser(ctx) {
