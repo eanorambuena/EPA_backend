@@ -126,6 +126,17 @@ module.exports = class Safely {
     await contact.destroy()
   }
 
+  static async DelUser(ctx, id) {
+    const user = await ctx.orm.User.findByPk(id)
+    if (!user) {
+      throw new ItemNotFoundError('User')
+    }
+    if (!this.IsAdmin(ctx.state.user) && user.id !== ctx.state.user.id) {
+      throw new AuthorizationError()
+    }
+    await user.destroy()
+  }
+
   static async GetCurrentUser(ctx) {
     const user = await ctx.orm.User.findByPk(ctx.state.user.sub)
     if (!user) {
