@@ -33,7 +33,7 @@ yarn sequelize-cli db:create    # Crear la base de datos del proyecto
 yarn sequelize-cli db:migrate   # Realizamos las migraciones
 yarn sequelize-cli db_seed:all  # Instanciar datos de semillas (opcional)
 ```
-Una vez hechos los pasos anteriores, es posible que haya un error al querer hacer yarn dev. Para solucionarlo, en el archivo config.js debemos cambiar la linea de "ssl", donde en vez de tener todos los parametros que tiene encerrados por una llave, solo debe decir lo siguiente para las 3 bases de datos (development, test y porduction):
+Una vez hechos los pasos anteriores, es posible que haya un error al querer hacer yarn dev. Para solucionarlo, en el archivo config.js debemos cambiar la linea de "ssl", donde en vez de tener todos los parametros que tiene encerrados por una llave, solo debe decir lo siguiente para las 3 bases de datos (development, test y production):
 ```
 ssl: false
 ```
