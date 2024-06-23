@@ -1,6 +1,50 @@
 # EPA_backend
 backend
 
+# Locally instantiate the database
+Para instanciar de manera local la base de datos, se requieren seguir los siguientes pasos:
+Primero que nada debemos crear nuestro archivo .env localmente en la raíz de EPA-backend, que debe ser el siguiente:
+```
+DB_USERNAME = epaowner
+DB_PASSWORD = epapassword
+DB_NAME = epachat
+DB_HOST = 'localhost'
+```
+Una vez realizado esto, debemos entrar a postgresql con el superusuario por defecto:
+```
+sudo -U postgres psql
+```
+Una vez dentro, crear un usuario de tipo superuser de nombre "epaowner" y contraseña "epapassword":
+```
+CREATE USER epaowner WITH SUPERUSER PASSWORD 'epapassword';
+```
+Creado el usuario, debemos crear la base de datos con el usuario anteriormente creado:
+```
+CREATE DATABASE epachat OWNER epaowner;
+```
+Una vez creada la base de datos, debemos salir de postgresql:
+```
+\q
+```
+Ahora, debemos dirigirnos hacía la raíz de EPA_backend y escribir los siguientes comandos en la terminal:
+```
+yarn sequelize-cli db:drop      # Borrar base de datos del proyecto (opcional)
+yarn sequelize-cli db:create    # Crear la base de datos del proyecto
+yarn sequelize-cli db:migrate   # Realizamos las migraciones
+yarn sequelize-cli db_seed:all  # Instanciar datos de semillas (opcional)
+```
+Una vez hechos los pasos anteriores, es posible que haya un error al querer hacer yarn dev. Para solucionarlo, en el archivo config.js debemos cambiar la linea de "ssl", donde en vez de tener todos los parametros que tiene encerrados por una llave, solo debe decir lo siguiente para las 3 bases de datos (development, test y production):
+```
+ssl: false
+```
+Lo anterior sucede principalmente porque la configuración de la base de datos está hecha para que funcione en linea, con las medidas de seguridad necesarias.
+
+Por último, debemos escribir el siguiente comando en la raíz de EPA_backend:
+```
+yarn dev
+```
+De esta forma, podremos levantar la base de datos de manera local, la cual estará escuchando solicitudes en el puerto 3000 (http://localhost:3000).
+
 # Users
 
 ### Get all users
