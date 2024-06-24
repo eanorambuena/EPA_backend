@@ -93,13 +93,22 @@ module.exports = class Safely {
   }
 
   static async PostContact(ctx) {
-    if (!this.IsAdmin(ctx.state.user) && ctx.request.body.userBase !== ctx.state.user.id) {
-      throw new AuthorizationError()
+    const userBase = await this.GetCurrentUser(ctx)
+    if (!userBase) {
+      throw new AuthenticationError()
     }
-    if (ctx.request.body.userBase === ctx.request.body.userContact) {
+    const userContact = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.userContact } })
+    // if (!this.IsAdmin(ctx.state.user) && ctx.request.body.userBase !== ctx.state.user.id) {
+    //   throw new AuthorizationError()
+    // }
+    if (userBase === userContact) {
       throw new ApplicationError('User cannot add themselves as a contact', 400)
     }
-    const contact = await ctx.orm.Contact.create(ctx.request.body)
+    const existingContact = await ctx.orm.Contact.findOne({ where: { userBase: userBase.id, userContact: userContact.id } })
+    if (existingContact) {
+      throw new ApplicationError('Contact already exists', 400)
+    }
+    const contact = await ctx.orm.Contact.create({ userBase: userBase.id, userContact: userContact.id, nickname: ctx.request.body.nickname })
     return contact
   }
 
