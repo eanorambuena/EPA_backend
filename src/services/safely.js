@@ -1,4 +1,4 @@
-const { ApplicationError, AuthenticationError, AuthorizationError, ItemNotFoundError } = require('./errors')
+const { ApplicationError, AuthenticationError, AuthorizationError, ItemNotFoundError, ExistingEntityError } = require('./errors')
 
 module.exports = class Safely {
   static async Do(ctx, action) {
@@ -103,7 +103,7 @@ module.exports = class Safely {
     }
     const existingContact = await ctx.orm.Contact.findOne({ where: { userBase: userBase.id, userContact: userContact.id } })
     if (existingContact) {
-      throw new ApplicationError('Contact already exists', 400)
+      throw new ExistingEntityError('Contact')
     }
     const contact = await ctx.orm.Contact.create({ userBase: userBase.id, userContact: userContact.id, nickname: ctx.request.body.nickname })
     return contact
