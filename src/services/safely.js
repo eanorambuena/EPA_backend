@@ -98,9 +98,6 @@ module.exports = class Safely {
       throw new AuthenticationError()
     }
     const userContact = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.userContact } })
-    // if (!this.IsAdmin(ctx.state.user) && ctx.request.body.userBase !== ctx.state.user.id) {
-    //   throw new AuthorizationError()
-    // }
     if (userBase === userContact) {
       throw new ApplicationError('User cannot add themselves as a contact', 400)
     }
