@@ -7,11 +7,12 @@ module.exports = class Safely {
     }
     catch (error) {
       if (error instanceof ApplicationError) {
+        console.log(`ApplicationError caught: ${error.message}`)
         ctx.body = error.message
         ctx.status = error.status
       }
       else {
-        console.log(error)
+        console.log('Unexpected error:', error)
         ctx.body = 'Internal server error'
         ctx.status = 500
       }
@@ -93,19 +94,25 @@ module.exports = class Safely {
   }
 
   static async PostContact(ctx) {
+    console.log('Entering PostContact')
     const userBase = await this.GetCurrentUser(ctx)
     if (!userBase) {
       throw new AuthenticationError()
     }
     const userContact = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.userContact } })
-    if (userBase === userContact) {
+    if (!userContact) {
+      throw new ApplicationError('User not found', 404)
+    }
+    if (userBase.id === userContact.id) {
       throw new ApplicationError('User cannot add themselves as a contact', 400)
     }
     const existingContact = await ctx.orm.Contact.findOne({ where: { userBase: userBase.id, userContact: userContact.id } })
     if (existingContact) {
+      console.log('Contact already exists')
       throw new ExistingEntityError('Contact')
     }
     const contact = await ctx.orm.Contact.create({ userBase: userBase.id, userContact: userContact.id, nickname: ctx.request.body.nickname })
+    console.log('Contact created')
     return contact
   }
 
