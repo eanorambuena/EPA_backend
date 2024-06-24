@@ -22,11 +22,13 @@ router.get('/user/:id', async ctx => Safely.Do(ctx, async (ctx) => {
   ctx.status = 200
 }))
 
-router.post('/', async ctx => Safely.Do(ctx, async (ctx) => {
-  const contact = Safely.PostContact(ctx)
-  ctx.body = contact
-  ctx.status = 201
-}))
+router.post('/', async (ctx) => {
+  await Safely.Do(ctx, async (ctx) => {
+    const contact = await Safely.PostContact(ctx)
+    ctx.body = contact
+    ctx.status = 201
+  })
+})
 
 router.put('/:id', async ctx => Safely.Do(ctx, async (ctx) => {
   const contact = await Safely.PutContact(ctx, ctx.params.id)
