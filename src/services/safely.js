@@ -73,12 +73,21 @@ module.exports = class Safely {
     return contacts
   }
 
-  static async GetContacts(ctx) {
+  static async GetContacts(ctx, id) {
     const user = await this.GetCurrentUser(ctx)
-    const contacts = await ctx.orm.Contact.findAll({ where: { userBase: user.id } })
+    if (!this.IsAdmin(ctx.state.user) && id != user.id) {
+      throw new AuthorizationError()
+    }
+    const contacts = await ctx.orm.Contact.findAll({ where: { userBase: id } })
     if (!contacts) {
       throw new ItemNotFoundError('Contacts')
     }
+    // add the phone number by using users table
+    for (let i = 0; i < contacts.length; i++) {
+      const userContact = await ctx.orm.User.findByPk(contacts[i].userContact)
+      contacts[i].userContact = userContact.phoneNumber
+    }
+
     return contacts
   }
 
@@ -87,7 +96,7 @@ module.exports = class Safely {
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase != ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     return contact
@@ -121,7 +130,7 @@ module.exports = class Safely {
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase != ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     await contact.update(ctx.request.body)
@@ -133,7 +142,7 @@ module.exports = class Safely {
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase != ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     await contact.destroy()
@@ -148,7 +157,7 @@ module.exports = class Safely {
     if (!currentUser) {
       throw new AuthenticationError()
     }
-    if (!this.IsAdmin(ctx.state.user) && user.id !== currentUser.id) {
+    if (!this.IsAdmin(ctx.state.user) && user.id != currentUser.id) {
       throw new AuthorizationError()
     }
     const profile = await ctx.orm.Profile.findOne({ where: { userId: user.id } })
