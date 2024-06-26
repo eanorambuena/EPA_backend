@@ -62,6 +62,41 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
+  static async PostChat(ctx) {
+    const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const chat = await ctx.orm.Chat.create({ name: ctx.request.body.name })
+    await ctx.orm.ChatMember.create({ chatId: chat.id, userId: user.id })
+    if (ctx.request.body.members) {
+      for (let i = 0; i < ctx.request.body.members.length; i++) {
+        const member = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.members[i] } })
+        if (member) {
+          await ctx.orm.ChatMember.create({ chatId: chat.id, userId: member.id })
+        }
+      }
+    }
+    return chat
+  }
+
+  static async AddChatMember(ctx, chatId) {
+    const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const member = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+    if (!member) {
+      throw new ItemNotFoundError('User')
+    }
+    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id })
+    return chatMember
+  }
+
   static async GetAllContacts(ctx) {
     const contacts = await ctx.orm.Contact.findAll()
     if (!contacts) {

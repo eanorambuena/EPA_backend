@@ -27,4 +27,10 @@ router.get('chats.members', '/:id/members', async ctx => Safely.Do(ctx, async (c
   ctx.status = 200
 }))
 
+router.post('chats.create', '/', async ctx => Safely.Do(ctx, async (ctx) => {
+  const chat = await Safely.PostChat(ctx)
+  ctx.body = chat
+  ctx.status = 201
+}))
+
 module.exports = router
