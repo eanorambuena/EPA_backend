@@ -17,7 +17,7 @@ router.get('/:id', async ctx => Safely.Do(ctx, async (ctx) => {
 }))
 
 router.get('/user/:id', async ctx => Safely.Do(ctx, async (ctx) => {
-  const contacts = await Safely.GetContacts(ctx)
+  const contacts = await Safely.GetContacts(ctx, ctx.params.id)
   ctx.body = contacts
   ctx.status = 200
 }))
