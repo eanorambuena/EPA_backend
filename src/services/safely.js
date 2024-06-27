@@ -62,6 +62,20 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
+  static async PatchChat(ctx, id) {
+    const chat = await Safely.GetChat(ctx, ctx.params.id)
+    const user = await Safely.GetUser(ctx, ctx.state.user.id)
+    if (!chat || !chat.members.includes(user.id)) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatmember = await ctx.orm.ChatMember.findOne({ where: { chatId: chat.id, userId: user.id } })
+    if (!this.isAdmin(user) && chatmember.role != 'admin') {
+      throw new AuthorizationError()
+    }
+    await chat.update(ctx.request.body)
+    return chat
+  }
+
   static async GetAllContacts(ctx) {
     const contacts = await ctx.orm.Contact.findAll()
     if (!contacts) {

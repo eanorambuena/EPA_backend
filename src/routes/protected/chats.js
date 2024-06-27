@@ -27,4 +27,10 @@ router.get('chats.members', '/:id/members', async ctx => Safely.Do(ctx, async (c
   ctx.status = 200
 }))
 
+router.patch('chats.update', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
+  const chat = await Safely.PatchChat(ctx, ctx.params.id)
+  ctx.body = chat
+  ctx.status = 200
+}))
+
 module.exports = router
