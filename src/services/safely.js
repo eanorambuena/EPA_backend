@@ -67,16 +67,9 @@ module.exports = class Safely {
     if (!user) {
       throw new AuthenticationError()
     }
-    const chat = await ctx.orm.Chat.create({ name: ctx.request.body.name })
-    await ctx.orm.ChatMember.create({ chatId: chat.id, userId: user.id })
-    if (ctx.request.body.members) {
-      for (let i = 0; i < ctx.request.body.members.length; i++) {
-        const member = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.members[i] } })
-        if (member) {
-          await ctx.orm.ChatMember.create({ chatId: chat.id, userId: member.id })
-        }
-      }
-    }
+    const title = ctx.request.body.title
+    const chat = await ctx.orm.Chat.create({ title: title, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Asadito.jpg/1200px-Asadito.jpg' })
+    await ctx.orm.ChatMember.create({ chatId: chat.id, userId: user.id, role: 'owner' })
     return chat
   }
 
