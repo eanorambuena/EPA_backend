@@ -194,8 +194,8 @@ module.exports = class Safely {
     return user
   }
 
-  static IsAdmin(user) {
-    return user.type === 'admin'
+  static IsAdmin(JWTuser) {
+    return JWTuser.scope == 'admin'
   }
 
   static async IsChatMember(ctx, user, chatId) {
