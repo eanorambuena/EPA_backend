@@ -206,3 +206,100 @@ Response:
     "updatedAt": "2024-06-14T02:25:10.900Z"
 }
 ```
+# Profile
+## Get all profiles
+Puedes encontrar todos los usuarios registrados utilizando /profiles endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/profiles
+```
+Response:
+```
+[
+    {
+        "id": 2,
+        "username": "John",
+        "email": "johndoe@yahoo.com",
+        "status": "Hello, I am John",
+        "description": "I am an old man",
+        "image": "https://i.pravatar.cc/150?img=68",
+        "userId": 2,
+        "createdAt": "2024-06-25T21:17:14.115Z",
+        "updatedAt": "2024-06-25T21:17:14.115Z"
+    },
+    // ...
+]
+```
+# Get a single profile
+Puedes encontrar un determinado perfil agregando <id> como parámetro: /profiles/id
+```
+[GET] https://epa-backend-1.onrender.com/profiles/1
+```
+Response:
+```
+{
+    "id": 1,
+    "username": "Alex",
+    "email": "alex@gmail.com",
+    "status": "Hola, soy un test de patch",
+    "description": "I am a software engineer",
+    "image": "https://i.pravatar.cc/150?img=60",
+    "userId": 1,
+    "createdAt": "2024-06-25T21:17:14.115Z",
+    "updatedAt": "2024-06-28T22:05:45.248Z"
+}
+```
+# Create a profile
+Para crear un profile debemos utilizar /profiles endpoint con el método POST. Cabe recalcar que es importante que para crear un perfil, se debe primero haber creado un usuario con /signup.
+```
+[POST] https://epa-backend-1.onrender.com/profiles
+```
+Request:
+```
+{
+    "username": "Test",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "username": "Test",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9,
+    "updatedAt": "2024-06-28T23:00:56.424Z",
+    "createdAt": "2024-06-28T23:00:56.424Z"
+}
+```
+# Update a profile
+Puedes actualizar la información de un profile con el endpoint profiles/userId, donde userId será la id del usuario al que pertenece dicho perfil.
+```
+[PATCH] https://epa-backend-1.onrender.com/profiles/5
+```
+Request:
+```
+{
+    "username": "TestModificated"
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "username": "TestModificated",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9,
+    "createdAt": "2024-06-28T23:00:56.424Z",
+    "updatedAt": "2024-06-28T23:20:37.746Z"
+}
+```
