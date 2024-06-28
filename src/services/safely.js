@@ -204,9 +204,11 @@ module.exports = class Safely {
     }
     const members = await this.GetChatMembers(ctx, chatId)
     if (members.length == 1) {
+      await chatMember.destroy()
       await chat.destroy()
+    } else {
+      await chatMember.destroy()
     }
-    return await chatMember.destroy()
   }
 
   static async DelUser(ctx, id) {
