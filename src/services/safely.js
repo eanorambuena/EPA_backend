@@ -62,6 +62,7 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
+
   static async PatchChat(ctx, id) {
     const chat = await Safely.GetChat(ctx, id)
     const user = await Safely.GetUser(ctx, ctx.state.user.sub)
@@ -75,6 +76,34 @@ module.exports = class Safely {
     console.log('Updating chat')
     await chat.update(ctx.request.body)
     return chat
+
+  static async PostChat(ctx) {
+    const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const title = ctx.request.body.title
+    const chat = await ctx.orm.Chat.create({ title: title, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Asadito.jpg/1200px-Asadito.jpg' })
+    await ctx.orm.ChatMember.create({ chatId: chat.id, userId: user.id, role: 'owner' })
+    return chat
+  }
+
+  static async AddChatMember(ctx, chatId) {
+    const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const member = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+    if (!member) {
+      throw new ItemNotFoundError('User')
+    }
+    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id })
+    return chatMember
+
   }
 
   static async GetAllContacts(ctx) {
@@ -209,8 +238,8 @@ module.exports = class Safely {
     return user
   }
 
-  static IsAdmin(user) {
-    return user.type === 'admin'
+  static IsAdmin(JWTuser) {
+    return JWTuser.scope == 'admin'
   }
 
   static async IsChatMember(ctx, user, chatId) {
