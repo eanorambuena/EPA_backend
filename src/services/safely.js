@@ -89,8 +89,15 @@ module.exports = class Safely {
     return chat
   }
 
-  static async AddChatMember(ctx, chatId) {
+  static async AddChatMember(ctx, newUser, chatId) {
     const user = await this.GetCurrentUser(ctx)
+    if (!newUser) {
+      console.log('User not recieved')
+    }
+    else {
+      const user = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+    }
+    
     if (!user) {
       throw new AuthenticationError()
     }
@@ -102,7 +109,7 @@ module.exports = class Safely {
     if (!member) {
       throw new ItemNotFoundError('User')
     }
-    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id })
+    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id, role: 'member'})
     return chatMember
 
   }
