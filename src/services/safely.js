@@ -72,7 +72,6 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
-
   static async PatchChat(ctx, id) {
     const chat = await Safely.GetChat(ctx, id)
     const user = await Safely.GetUser(ctx, ctx.state.user.sub)
@@ -114,7 +113,6 @@ module.exports = class Safely {
     }
     const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id })
     return chatMember
-
   }
 
   static async GetAllContacts(ctx) {
