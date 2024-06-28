@@ -193,6 +193,18 @@ module.exports = class Safely {
     await contact.destroy()
   }
 
+  static async LeaveChat(ctx, user, chatId) {
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+    if (!chatMember) {
+      throw new ItemNotFoundError('ChatMember')
+    }
+    return await chatMember.destroy()
+  }
+
   static async DelUser(ctx, id) {
     const user = await this.GetUser(ctx, id)
     if (!user) {
