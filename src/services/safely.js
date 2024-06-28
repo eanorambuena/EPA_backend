@@ -63,15 +63,16 @@ module.exports = class Safely {
   }
 
   static async PatchChat(ctx, id) {
-    const chat = await Safely.GetChat(ctx, ctx.params.id)
-    const user = await Safely.GetUser(ctx, ctx.state.user.id)
-    if (!chat || !chat.members.includes(user.id)) {
+    const chat = await Safely.GetChat(ctx, id)
+    const user = await Safely.GetUser(ctx, ctx.state.user.sub)
+    if (!chat || !user) {
       throw new ItemNotFoundError('Chat')
     }
     const chatmember = await ctx.orm.ChatMember.findOne({ where: { chatId: chat.id, userId: user.id } })
-    if (!this.isAdmin(user) && chatmember.role != 'admin') {
+    if (!this.IsAdmin(user) && chatmember.role != 'owner') {
       throw new AuthorizationError()
     }
+    console.log('Updating chat')
     await chat.update(ctx.request.body)
     return chat
   }
