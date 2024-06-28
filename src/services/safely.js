@@ -215,6 +215,7 @@ module.exports = class Safely {
     if (members.length == 1) {
       await chat.destroy()
     }
+
   }
 
   static async DelUser(ctx, id) {
