@@ -21,32 +21,35 @@ module.exports = class Safely {
 
   static async GetChat(ctx, id) {
     const chat = await ctx.orm.Chat.findByPk(id)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
     const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
     const isChatMember = await this.IsChatMember(ctx, user, id)
     if (!isChatMember) {
       throw new AuthorizationError()
-    }
-    if (!chat) {
-      throw new ItemNotFoundError('Chat')
     }
     return chat
   }
 
   static async GetChatMembers(ctx, chatId) {
-    const user = await this.GetCurrentUser(ctx);
-    const chat = await this.GetChat(ctx, chatId);
+    const user = await this.GetCurrentUser(ctx)
+    const chat = await this.GetChat(ctx, chatId)
     if (!chat) {
-      throw new ItemNotFoundError('Chat');
+      throw new ItemNotFoundError('Chat')
     }
-  
-    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } });
+
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
     if (!chatMember) {
-      throw new AuthorizationError();
+      throw new AuthorizationError()
     }
-  
-    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } });
-    chatMembers.map(chatMember => chatMember.password = undefined);
-    return chatMembers;
+
+    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    chatMembers.map(chatMember => chatMember.password = undefined)
+    return chatMembers
   }
 
   static async GetChatMessages(ctx, chatId) {
