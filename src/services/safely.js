@@ -62,6 +62,22 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
+
+  static async PatchChat(ctx, id) {
+    const chat = await Safely.GetChat(ctx, id)
+    const user = await Safely.GetUser(ctx, ctx.state.user.sub)
+    if (!chat || !user) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatmember = await ctx.orm.ChatMember.findOne({ where: { chatId: chat.id, userId: user.id } })
+    if (!this.IsAdmin(user) && chatmember.role != 'owner') {
+      throw new AuthorizationError()
+    }
+    console.log('Updating chat')
+    await chat.update(ctx.request.body)
+    return chat
+  }
+
   static async PostChat(ctx) {
     const user = await this.GetCurrentUser(ctx)
     if (!user) {
@@ -88,6 +104,7 @@ module.exports = class Safely {
     }
     const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id })
     return chatMember
+
   }
 
   static async GetAllContacts(ctx) {
