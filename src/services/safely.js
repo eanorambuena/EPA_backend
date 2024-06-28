@@ -33,13 +33,20 @@ module.exports = class Safely {
   }
 
   static async GetChatMembers(ctx, chatId) {
-    const chat = await this.GetChat(ctx, chatId)
+    const user = await this.GetCurrentUser(ctx);
+    const chat = await this.GetChat(ctx, chatId);
     if (!chat) {
-      throw new AuthorizationError()
+      throw new ItemNotFoundError('Chat');
     }
-    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
-    chatMembers.map(chatMember => chatMember.password = undefined)
-    return chatMembers
+  
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } });
+    if (!chatMember) {
+      throw new AuthorizationError();
+    }
+  
+    const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } });
+    chatMembers.map(chatMember => chatMember.password = undefined);
+    return chatMembers;
   }
 
   static async GetChatMessages(ctx, chatId) {
@@ -202,12 +209,10 @@ module.exports = class Safely {
     if (!chatMember) {
       throw new ItemNotFoundError('ChatMember')
     }
-    const members = await this.GetChatMembers(ctx, chatId)
+    const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    await chatMember.destroy()
     if (members.length == 1) {
-      await chatMember.destroy()
       await chat.destroy()
-    } else {
-      await chatMember.destroy()
     }
   }
 
