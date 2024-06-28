@@ -213,10 +213,7 @@ module.exports = class Safely {
     const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
     await chatMember.destroy()
     if (members.length == 1) {
-      await chatMember.destroy()
       await chat.destroy()
-    } else {
-      await chatMember.destroy()
     }
   }
 
