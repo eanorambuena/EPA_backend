@@ -76,6 +76,7 @@ module.exports = class Safely {
     console.log('Updating chat')
     await chat.update(ctx.request.body)
     return chat
+  }
 
   static async PostChat(ctx) {
     const user = await this.GetCurrentUser(ctx)
