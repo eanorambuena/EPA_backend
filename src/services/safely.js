@@ -202,6 +202,10 @@ module.exports = class Safely {
     if (!chatMember) {
       throw new ItemNotFoundError('ChatMember')
     }
+    const members = await this.GetChatMembers(ctx, chatId)
+    if (members.length == 1) {
+      await chat.destroy()
+    }
     return await chatMember.destroy()
   }
 
