@@ -62,7 +62,6 @@ module.exports = class Safely {
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
   }
 
-
   static async PatchChat(ctx, id) {
     const chat = await Safely.GetChat(ctx, id)
     const user = await Safely.GetUser(ctx, ctx.state.user.sub)
@@ -90,14 +89,12 @@ module.exports = class Safely {
   }
 
   static async AddChatMember(ctx, newUser, chatId) {
-    const user = await this.GetCurrentUser(ctx)
+    var user = await this.GetCurrentUser(ctx)
     if (!newUser) {
       console.log('User not recieved')
+      user = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
     }
-    else {
-      const user = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
-    }
-    
+
     if (!user) {
       throw new AuthenticationError()
     }
@@ -109,9 +106,8 @@ module.exports = class Safely {
     if (!member) {
       throw new ItemNotFoundError('User')
     }
-    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id, role: 'member'})
+    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id, role: 'member' })
     return chatMember
-
   }
 
   static async GetAllContacts(ctx) {
@@ -125,7 +121,7 @@ module.exports = class Safely {
     return contacts
   }
 
-  static async GetContacts(ctx) {
+  static async GetContacts(ctx, id) {
     const user = await Safely.GetCurrentUser(ctx)
     if (!this.IsAdmin(ctx.state.user) && id != user.id) {
       throw new AuthorizationError()

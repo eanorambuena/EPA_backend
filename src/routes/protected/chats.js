@@ -33,13 +33,11 @@ router.post('chats.members.add', '/:id/members', async ctx => Safely.Do(ctx, asy
   ctx.status = 201
 }))
 
-
 router.patch('chats.update', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
   const chat = await Safely.PatchChat(ctx, ctx.params.id)
   ctx.body = chat
   ctx.status = 200
 }))
-
 
 router.post('chats.create', '/', async ctx => Safely.Do(ctx, async (ctx) => {
   const chat = await Safely.PostChat(ctx)
