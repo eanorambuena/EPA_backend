@@ -414,4 +414,120 @@ Response:
 ```
 
 ```
-
+# Chats
+### Get all chats
+Puedes encontrar todos los chats utilizando /chats endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/chats
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "title": "Two of us",
+        "image": "",
+        "createdAt": "2024-06-25T21:17:14.120Z",
+        "updatedAt": "2024-06-25T21:17:14.120Z"
+    },
+    // ...
+]
+```
+### Get a single chat
+Puedes encontrar un determinado chat agregando <id> como parámetro: /chats/id.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1
+```
+Response:
+```
+{
+    "id": 1,
+    "title": "Two of us",
+    "image": "",
+    "createdAt": "2024-06-25T21:17:14.120Z",
+    "updatedAt": "2024-06-25T21:17:14.120Z"
+}
+```
+### Get all the messages of a specific chat
+Puedes encontrar todos los mensajes de un chat en esepecífico utilizando el endpoint /chats/chatId/messages.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1/messages
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "userId": 1,
+        "chatId": 1,
+        "state": "sent",
+        "content": "Hi, how are you?",
+        "date": "2024-06-25T21:17:14.128Z",
+        "createdAt": "2024-06-25T21:17:14.128Z",
+        "updatedAt": "2024-06-25T21:17:14.128Z"
+    },
+    // ...
+]
+```
+### Get all the members of a specific chat
+Puedes encontrar todos los miembros de un chat en esepecífico utilizando el endpoint /chats/chatId/members.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1/members
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "userId": 1,
+        "chatId": 1,
+        "role": "owner",
+        "createdAt": "2024-06-25T21:17:14.134Z",
+        "updatedAt": "2024-06-25T21:17:14.134Z"
+    },
+    // ...
+]
+```
+### Create a chat
+Para crear un chat debemos utilizar /chats endpoint con el método POST.
+```
+[POST] https://epa-backend-1.onrender.com/chats
+```
+Request:
+```
+{
+    "title": "chat Test",
+    "Image": "chatImage.jpg"
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "title": "chat Test",
+    "image": "chatImage.jpg",
+    "updatedAt": "2024-06-29T00:34:22.414Z",
+    "createdAt": "2024-06-29T00:34:22.414Z"
+}
+```
+### Update a chat
+Puedes actualizar la información de un chat con el endpoint chats/chatId, donde ChatId será la id del chat a actualizar.
+```
+[PATCH] https://epa-backend-1.onrender.com/chats/1
+```
+Request:
+```
+{
+    "title": "Two of us Modificated"
+}
+```
+Response:
+```
+{
+    "id": 1,
+    "title": "Two of us Modificated",
+    "image": "",
+    "createdAt": "2024-06-25T21:17:14.120Z",
+    "updatedAt": "2024-06-29T00:27:28.141Z"
+}
+```
