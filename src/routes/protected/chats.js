@@ -45,4 +45,10 @@ router.post('chats.create', '/', async ctx => Safely.Do(ctx, async (ctx) => {
   ctx.status = 201
 }))
 
+router.patch('chats.member.leave', '/leave/:id', async ctx => Safely.Do(ctx, async (ctx) => {
+  const user = await Safely.GetCurrentUser(ctx)
+  await Safely.LeaveChat(ctx, user, ctx.params.id)
+  ctx.status = 204
+}))
+
 module.exports = router

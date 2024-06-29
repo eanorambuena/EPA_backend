@@ -21,22 +21,34 @@ module.exports = class Safely {
 
   static async GetChat(ctx, id) {
     const chat = await ctx.orm.Chat.findByPk(id)
-    const user = await Safely.GetCurrentUser(ctx)
-    const isChatMember = await Safely.IsChatMember(ctx, user, id)
-    if (!isChatMember) {
-      throw new AuthorizationError()
-    }
     if (!chat) {
       throw new ItemNotFoundError('Chat')
+    }
+    const user = await Safely.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const isChatMember = await Safely.IsChatMember(ctx, user, id)
+
+    if (!isChatMember) {
+      throw new AuthorizationError()
     }
     return chat
   }
 
   static async GetChatMembers(ctx, chatId) {
     const chat = await Safely.GetChat(ctx, chatId)
+    const user = await Safely.GetCurrentUser(ctx)
+
     if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+    if (!chatMember) {
       throw new AuthorizationError()
     }
+
     const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
     chatMembers.map(chatMember => chatMember.password = undefined)
     return chatMembers
@@ -194,6 +206,26 @@ module.exports = class Safely {
       throw new AuthorizationError()
     }
     await contact.destroy()
+  }
+
+  static async LeaveChat(ctx, user, chatId) {
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+    if (!chatMember) {
+      throw new ItemNotFoundError('ChatMember')
+    }
+    const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    if (chatMember.role == 'owner' && members.length > 1) {
+      const otherMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: { [ctx.orm.Sequelize.Op.ne]: user.id } } })
+      await otherMember.update({ role: 'owner' })
+    }
+    await chatMember.destroy()
+    if (members.length == 1) {
+      await chat.destroy()
+    }
   }
 
   static async DelUser(ctx, id) {
