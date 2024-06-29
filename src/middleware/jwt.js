@@ -12,6 +12,7 @@ function getJwtScope(token) {
 async function isUserOfScopes(ctx, next, scopes) {
   if (!ctx.request.headers.authorization) {
     ctx.throw(401, 'Unauthorized')
+    return false
   }
   await next()
   const token = ctx.request.headers.authorization.split(' ')[1]

@@ -206,3 +206,328 @@ Response:
     "updatedAt": "2024-06-14T02:25:10.900Z"
 }
 ```
+# Profile
+### Get all profiles
+Puedes encontrar todos los profiles registrados utilizando /profiles endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/profiles
+```
+Response:
+```
+[
+    {
+        "id": 2,
+        "username": "John",
+        "email": "johndoe@yahoo.com",
+        "status": "Hello, I am John",
+        "description": "I am an old man",
+        "image": "https://i.pravatar.cc/150?img=68",
+        "userId": 2,
+        "createdAt": "2024-06-25T21:17:14.115Z",
+        "updatedAt": "2024-06-25T21:17:14.115Z"
+    },
+    // ...
+]
+```
+### Get a single profile
+Puedes encontrar un determinado perfil agregando <id> como parámetro: /profiles/id
+```
+[GET] https://epa-backend-1.onrender.com/profiles/1
+```
+Response:
+```
+{
+    "id": 1,
+    "username": "Alex",
+    "email": "alex@gmail.com",
+    "status": "Hola, soy un test de patch",
+    "description": "I am a software engineer",
+    "image": "https://i.pravatar.cc/150?img=60",
+    "userId": 1,
+    "createdAt": "2024-06-25T21:17:14.115Z",
+    "updatedAt": "2024-06-28T22:05:45.248Z"
+}
+```
+### Create a profile
+Para crear un profile debemos utilizar /profiles endpoint con el método POST. Cabe recalcar que es importante que para crear un perfil, se debe primero haber creado un usuario con /signup.
+```
+[POST] https://epa-backend-1.onrender.com/profiles
+```
+Request:
+```
+{
+    "username": "Test",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "username": "Test",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9,
+    "updatedAt": "2024-06-28T23:00:56.424Z",
+    "createdAt": "2024-06-28T23:00:56.424Z"
+}
+```
+### Update a profile
+Puedes actualizar la información de un profile con el endpoint profiles/userId, donde userId será la id del usuario al que pertenece dicho perfil.
+```
+[PATCH] https://epa-backend-1.onrender.com/profiles/5
+```
+Request:
+```
+{
+    "username": "TestModificated"
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "username": "TestModificated",
+    "email": "test@yahoo.com",
+    "status": "ok",
+    "description": "hello I am a test",
+    "image": "https://i.pravatar.cc/150?img=68",
+    "userId": 9,
+    "createdAt": "2024-06-28T23:00:56.424Z",
+    "updatedAt": "2024-06-28T23:20:37.746Z"
+}
+```
+
+# Contacts
+### Get all contacts
+Puedes encontrar todos los contacts registrados utilizando /contacts endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/contacts
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "nickname": "Johnny",
+        "userBase": 1,
+        "userContact": 2,
+        "createdAt": "2024-06-25T21:17:14.124Z",
+        "updatedAt": "2024-06-25T21:17:14.124Z"
+    },
+    // ...
+]
+```
+### Get a single contact
+Puedes encontrar un determinado contacto agregando <id> como parámetro: /profiles/id.
+```
+[GET] https://epa-backend-1.onrender.com/profiles/1
+```
+Response:
+```
+{
+    "id": 1,
+    "nickname": "Johnny",
+    "userBase": 1,
+    "userContact": 2,
+    "createdAt": "2024-06-25T21:17:14.124Z",
+    "updatedAt": "2024-06-25T21:17:14.124Z"
+}
+```
+### Get all the contacts of a specific user
+Puedes encontrar todos los contactos de un usuario en esepecífico utilizando el endpoint /contacts/user/userId.
+```
+[GET] https://epa-backend-1.onrender.com/contacts/user/2
+```
+Response:
+```
+[
+    {
+        "id": 3,
+        "nickname": "Gold digger",
+        "userBase": 2,
+        "userContact": "+56944445678",
+        "createdAt": "2024-06-25T21:17:14.124Z",
+        "updatedAt": "2024-06-25T21:17:14.124Z"
+    },
+    // ...
+]
+```
+### Create a contact
+Para crear un contact debemos utilizar /contacts endpoint con el método POST. Cabe recalcar que el número de telefono (userContact) es el que asocia el contacto con el usuario y su respectiva id.
+```
+[POST] https://epa-backend-1.onrender.com/contacts
+```
+Request:
+```
+{
+    "nickname": "ContactTest",
+    "userBase": 2,
+    "userContact": "+56912345559"
+}
+```
+Responde:
+```
+{
+    "id": 6,
+    "userBase": 1,
+    "userContact": 9,
+    "nickname": "ContactTest",
+    "updatedAt": "2024-06-28T23:53:42.795Z",
+    "createdAt": "2024-06-28T23:53:42.795Z"
+}
+```
+### Update a contact
+Puedes actualizar la información de un contact con el endpoint contacts/contactId, donde ContactId será la id del contacto a actualizar.
+```
+[PUT] https://epa-backend-1.onrender.com/contacts/6
+```
+Request:
+```
+{
+    "nickname": "ContactTestModificated"
+}
+```
+Response:
+```
+{
+    "id": 6,
+    "nickname": "ContactTestModificated",
+    "userBase": 1,
+    "userContact": 9,
+    "createdAt": "2024-06-28T23:53:42.795Z",
+    "updatedAt": "2024-06-28T23:58:09.875Z"
+}
+```
+### Delete a contact
+Para eliminar un usuario debes agregar id como parámetro: /contacts/id. Donde id será la id del contact a eliminar (parametro id del body, no condunfir con userBase o userContact).
+```
+[DELETE] https://epa-backend-1.onrender.com/contacts/6
+```
+Response:
+```
+
+```
+# Chats
+### Get all chats
+Puedes encontrar todos los chats utilizando /chats endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/chats
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "title": "Two of us",
+        "image": "",
+        "createdAt": "2024-06-25T21:17:14.120Z",
+        "updatedAt": "2024-06-25T21:17:14.120Z"
+    },
+    // ...
+]
+```
+### Get a single chat
+Puedes encontrar un determinado chat agregando <id> como parámetro: /chats/id.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1
+```
+Response:
+```
+{
+    "id": 1,
+    "title": "Two of us",
+    "image": "",
+    "createdAt": "2024-06-25T21:17:14.120Z",
+    "updatedAt": "2024-06-25T21:17:14.120Z"
+}
+```
+### Get all the messages of a specific chat
+Puedes encontrar todos los mensajes de un chat en esepecífico utilizando el endpoint /chats/chatId/messages.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1/messages
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "userId": 1,
+        "chatId": 1,
+        "state": "sent",
+        "content": "Hi, how are you?",
+        "date": "2024-06-25T21:17:14.128Z",
+        "createdAt": "2024-06-25T21:17:14.128Z",
+        "updatedAt": "2024-06-25T21:17:14.128Z"
+    },
+    // ...
+]
+```
+### Get all the members of a specific chat
+Puedes encontrar todos los miembros de un chat en esepecífico utilizando el endpoint /chats/chatId/members.
+```
+[GET] https://epa-backend-1.onrender.com/chats/1/members
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "userId": 1,
+        "chatId": 1,
+        "role": "owner",
+        "createdAt": "2024-06-25T21:17:14.134Z",
+        "updatedAt": "2024-06-25T21:17:14.134Z"
+    },
+    // ...
+]
+```
+### Create a chat
+Para crear un chat debemos utilizar /chats endpoint con el método POST.
+```
+[POST] https://epa-backend-1.onrender.com/chats
+```
+Request:
+```
+{
+    "title": "chat Test",
+    "Image": "chatImage.jpg"
+}
+```
+Response:
+```
+{
+    "id": 5,
+    "title": "chat Test",
+    "image": "chatImage.jpg",
+    "updatedAt": "2024-06-29T00:34:22.414Z",
+    "createdAt": "2024-06-29T00:34:22.414Z"
+}
+```
+### Update a chat
+Puedes actualizar la información de un chat con el endpoint chats/chatId, donde ChatId será la id del chat a actualizar.
+```
+[PATCH] https://epa-backend-1.onrender.com/chats/1
+```
+Request:
+```
+{
+    "title": "Two of us Modificated"
+}
+```
+Response:
+```
+{
+    "id": 1,
+    "title": "Two of us Modificated",
+    "image": "",
+    "createdAt": "2024-06-25T21:17:14.120Z",
+    "updatedAt": "2024-06-29T00:27:28.141Z"
+}
+```
