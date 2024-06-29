@@ -210,11 +210,11 @@ module.exports = class Safely {
     if (!chatMember) {
       throw new ItemNotFoundError('ChatMember')
     }
+    const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
     if (chatMember.role == 'owner' && members.length > 1) {
       const otherMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: { [ctx.orm.Sequelize.Op.ne]: user.id } } })
       await otherMember.update({ role: 'owner' })
     }
-    const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
     await chatMember.destroy()
     if (members.length == 1) {
       await chat.destroy()
