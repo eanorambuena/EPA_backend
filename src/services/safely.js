@@ -1,4 +1,4 @@
-const { ApplicationError, AuthenticationError, AuthorizationError, ItemNotFoundError } = require('./errors')
+const { ApplicationError, AuthenticationError, AuthorizationError, ItemNotFoundError, ExistingEntityError } = require('./errors')
 
 module.exports = class Safely {
   static async Do(ctx, action) {
@@ -7,11 +7,12 @@ module.exports = class Safely {
     }
     catch (error) {
       if (error instanceof ApplicationError) {
+        console.log(`ApplicationError caught: ${error.message}`)
         ctx.body = error.message
         ctx.status = error.status
       }
       else {
-        console.log(error)
+        console.log('Unexpected error:', error)
         ctx.body = 'Internal server error'
         ctx.status = 500
       }
@@ -20,22 +21,34 @@ module.exports = class Safely {
 
   static async GetChat(ctx, id) {
     const chat = await ctx.orm.Chat.findByPk(id)
-    const user = await this.GetCurrentUser(ctx)
-    const isChatMember = await this.IsChatMember(ctx, user, id)
-    if (!isChatMember) {
-      throw new AuthorizationError()
-    }
     if (!chat) {
       throw new ItemNotFoundError('Chat')
+    }
+    const user = await Safely.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const isChatMember = await Safely.IsChatMember(ctx, user, id)
+
+    if (!isChatMember) {
+      throw new AuthorizationError()
     }
     return chat
   }
 
   static async GetChatMembers(ctx, chatId) {
-    const chat = await this.GetChat(ctx, chatId)
+    const chat = await Safely.GetChat(ctx, chatId)
+    const user = await Safely.GetCurrentUser(ctx)
+
     if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+    if (!chatMember) {
       throw new AuthorizationError()
     }
+
     const chatMembers = await ctx.orm.ChatMember.findAll({ where: { chatId } })
     chatMembers.map(chatMember => chatMember.password = undefined)
     return chatMembers
@@ -43,8 +56,8 @@ module.exports = class Safely {
 
   static async GetChatMessages(ctx, chatId) {
     const messages = await ctx.orm.Message.findAll({ where: { chatId } })
-    const user = await this.GetCurrentUser(ctx)
-    const isChatMember = await this.IsChatMember(ctx, user, chatId)
+    const user = await Safely.GetCurrentUser(ctx)
+    const isChatMember = await Safely.IsChatMember(ctx, user, chatId)
     if (!isChatMember) {
       throw new AuthorizationError()
     }
@@ -55,10 +68,58 @@ module.exports = class Safely {
   }
 
   static async GetChats(ctx) {
-    const user = await this.GetCurrentUser(ctx)
+    const user = await Safely.GetCurrentUser(ctx)
     const chatMembers = await ctx.orm.ChatMember.findAll({ where: { userId: user.id } })
     const chatIds = chatMembers.map(chatmember => chatmember.chatId)
     return await ctx.orm.Chat.findAll({ where: { id: chatIds } })
+  }
+
+  static async PatchChat(ctx, id) {
+    const chat = await Safely.GetChat(ctx, id)
+    const user = await Safely.GetUser(ctx, ctx.state.user.sub)
+    if (!chat || !user) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatmember = await ctx.orm.ChatMember.findOne({ where: { chatId: chat.id, userId: user.id } })
+    if (!this.IsAdmin(user) && chatmember.role != 'owner') {
+      throw new AuthorizationError()
+    }
+    console.log('Updating chat')
+    await chat.update(ctx.request.body)
+    return chat
+  }
+
+  static async PostChat(ctx) {
+    const user = await this.GetCurrentUser(ctx)
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const title = ctx.request.body.title
+    const chat = await ctx.orm.Chat.create({ title: title, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Asadito.jpg/1200px-Asadito.jpg' })
+    await ctx.orm.ChatMember.create({ chatId: chat.id, userId: user.id, role: 'owner' })
+    return chat
+  }
+
+  static async AddChatMember(ctx, newUser, chatId) {
+    var user = await this.GetCurrentUser(ctx)
+    if (!newUser) {
+      console.log('User not recieved')
+      user = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+    }
+
+    if (!user) {
+      throw new AuthenticationError()
+    }
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const member = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+    if (!member) {
+      throw new ItemNotFoundError('User')
+    }
+    const chatMember = await ctx.orm.ChatMember.create({ chatId, userId: member.id, role: 'member' })
+    return chatMember
   }
 
   static async GetAllContacts(ctx) {
@@ -66,18 +127,27 @@ module.exports = class Safely {
     if (!contacts) {
       throw new ItemNotFoundError('Contacts')
     }
-    if (!this.IsAdmin(ctx.state.user)) {
+    if (!Safely.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     return contacts
   }
 
-  static async GetContacts(ctx) {
-    const user = await this.GetCurrentUser(ctx)
-    const contacts = await ctx.orm.Contact.findAll({ where: { userBase: user.id } })
+  static async GetContacts(ctx, id) {
+    const user = await Safely.GetCurrentUser(ctx)
+    if (!this.IsAdmin(ctx.state.user) && id != user.id) {
+      throw new AuthorizationError()
+    }
+    const contacts = await ctx.orm.Contact.findAll({ where: { userBase: id } })
     if (!contacts) {
       throw new ItemNotFoundError('Contacts')
     }
+    // add the phone number by using users table
+    for (let i = 0; i < contacts.length; i++) {
+      const userContact = await ctx.orm.User.findByPk(contacts[i].userContact)
+      contacts[i].userContact = userContact.phoneNumber
+    }
+
     return contacts
   }
 
@@ -86,29 +156,41 @@ module.exports = class Safely {
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase !== ctx.state.user.id && !Safely.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     return contact
   }
 
   static async PostContact(ctx) {
-    if (!this.IsAdmin(ctx.state.user) && ctx.request.body.userBase !== ctx.state.user.id) {
-      throw new AuthorizationError()
+    console.log('Entering PostContact')
+    const userBase = await this.GetCurrentUser(ctx)
+    if (!userBase) {
+      throw new AuthenticationError()
     }
-    if (ctx.request.body.userBase === ctx.request.body.userContact) {
+    const userContact = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.userContact } })
+    if (!userContact) {
+      throw new ApplicationError('User not found', 404)
+    }
+    if (userBase.id === userContact.id) {
       throw new ApplicationError('User cannot add themselves as a contact', 400)
     }
-    const contact = await ctx.orm.Contact.create(ctx.request.body)
+    const existingContact = await ctx.orm.Contact.findOne({ where: { userBase: userBase.id, userContact: userContact.id } })
+    if (existingContact) {
+      console.log('Contact already exists')
+      throw new ExistingEntityError('Contact')
+    }
+    const contact = await ctx.orm.Contact.create({ userBase: userBase.id, userContact: userContact.id, nickname: ctx.request.body.nickname })
+    console.log('Contact created')
     return contact
   }
 
   static async PutContact(ctx, id) {
-    const contact = await this.GetContact(ctx, id)
+    const contact = await Safely.GetContact(ctx, id)
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase !== ctx.state.user.id && !Safely.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     await contact.update(ctx.request.body)
@@ -116,25 +198,56 @@ module.exports = class Safely {
   }
 
   static async DelContact(ctx, id) {
-    const contact = await this.GetContact(ctx, id)
+    const contact = await Safely.GetContact(ctx, id)
     if (!contact) {
       throw new ItemNotFoundError('Contact')
     }
-    if (contact.userBase !== ctx.state.user.id && !this.IsAdmin(ctx.state.user)) {
+    if (contact.userBase !== ctx.state.user.id && !Safely.IsAdmin(ctx.state.user)) {
       throw new AuthorizationError()
     }
     await contact.destroy()
   }
 
+  static async LeaveChat(ctx, user, chatId) {
+    const chat = await this.GetChat(ctx, chatId)
+    if (!chat) {
+      throw new ItemNotFoundError('Chat')
+    }
+    const chatMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+    if (!chatMember) {
+      throw new ItemNotFoundError('ChatMember')
+    }
+    const members = await ctx.orm.ChatMember.findAll({ where: { chatId } })
+    if (chatMember.role == 'owner' && members.length > 1) {
+      const otherMember = await ctx.orm.ChatMember.findOne({ where: { chatId, userId: { [ctx.orm.Sequelize.Op.ne]: user.id } } })
+      await otherMember.update({ role: 'owner' })
+    }
+    await chatMember.destroy()
+    if (members.length == 1) {
+      await chat.destroy()
+    }
+  }
+
   static async DelUser(ctx, id) {
-    const user = await ctx.orm.User.findByPk(id)
+    const user = await Safely.GetUser(ctx, id)
     if (!user) {
       throw new ItemNotFoundError('User')
     }
-    if (!this.IsAdmin(ctx.state.user) && user.id !== ctx.state.user.id) {
+    const currentUser = await Safely.GetCurrentUser(ctx)
+    if (!currentUser) {
+      throw new AuthenticationError()
+    }
+    if (!Safely.IsAdmin(ctx.state.user) && user.id !== currentUser.id) {
       throw new AuthorizationError()
     }
-    await user.destroy()
+    const profile = await ctx.orm.Profile.findOne({ where: { userId: user.id } })
+    if (profile) {
+      const profileResponse = await profile.destroy()
+      if (!profileResponse) {
+        throw new ApplicationError('Could not delete profile', 500)
+      }
+    }
+    return await user.destroy()
   }
 
   static async GetCurrentUser(ctx) {
@@ -161,11 +274,21 @@ module.exports = class Safely {
     return user
   }
 
-  static IsAdmin(user) {
-    return user.type === 'admin'
+  static IsAdmin(jwtUser) {
+    return jwtUser.scope == 'admin'
   }
 
   static async IsChatMember(ctx, user, chatId) {
     return !!await ctx.orm.ChatMember.findOne({ where: { chatId, userId: user.id } })
+  }
+
+  static async PostMessage(ctx, chatId) {
+    const user = await Safely.GetCurrentUser(ctx)
+    const isChatMember = await Safely.IsChatMember(ctx, user, chatId)
+    if (!isChatMember || Safely.IsAdmin(ctx.state.user)) {
+      throw new AuthorizationError()
+    }
+    const message = await ctx.orm.Message.create({ ...ctx.request.body, userId: user.id, chatId })
+    return message
   }
 }

@@ -4,23 +4,21 @@ const { assertRequiredFields } = require('../services/assertRequiredFields')
 const bcrypt = require('bcrypt')
 const Safely = require('../services/safely')
 const { sendJwt } = require('../services/createJwt')
+const { AuthenticationError, ItemNotFoundError } = require('../services/errors')
 
 const router = new Router()
 
 router.post('/', async ctx => Safely.Do(ctx, async (ctx) => {
   assertRequiredFields(ctx.request.body, ['phoneNumber', 'password'])
   const { phoneNumber, password } = ctx.request.body
-  console.log('phoneNumber', phoneNumber)
-  console.log('password', password)
 
   const user = await User.findOne({ where: { phoneNumber: phoneNumber } })
-
+  if (!user) {
+    throw new ItemNotFoundError('User')
+  }
   const validPassword = await bcrypt.compare(password, user.password)
-
   if (!validPassword) {
-    ctx.body = { error: 'Invalid credentials' }
-    ctx.status = 401
-    return
+    throw new AuthenticationError()
   }
   sendJwt(ctx, user)
 }))

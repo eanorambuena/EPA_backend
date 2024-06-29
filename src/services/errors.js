@@ -33,10 +33,18 @@ class MissingFieldsError extends ApplicationError {
   }
 }
 
+class ExistingEntityError extends ApplicationError {
+  constructor(entityName) {
+    super(`${entityName} already exists`, 400)
+    this.name = 'ExistingEntityError'
+  }
+}
+
 module.exports = {
   ApplicationError,
   AuthenticationError,
   AuthorizationError,
   ItemNotFoundError,
-  MissingFieldsError
+  MissingFieldsError,
+  ExistingEntityError
 }

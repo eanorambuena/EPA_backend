@@ -27,4 +27,28 @@ router.get('chats.members', '/:id/members', async ctx => Safely.Do(ctx, async (c
   ctx.status = 200
 }))
 
+router.post('chats.members.add', '/:id/members', async ctx => Safely.Do(ctx, async (ctx) => {
+  const user = await ctx.orm.User.findOne({ where: { phoneNumber: ctx.request.body.phoneNumber } })
+  await Safely.AddChatMember(ctx, user, ctx.params.id)
+  ctx.status = 201
+}))
+
+router.patch('chats.update', '/:id', async ctx => Safely.Do(ctx, async (ctx) => {
+  const chat = await Safely.PatchChat(ctx, ctx.params.id)
+  ctx.body = chat
+  ctx.status = 200
+}))
+
+router.post('chats.create', '/', async ctx => Safely.Do(ctx, async (ctx) => {
+  const chat = await Safely.PostChat(ctx)
+  ctx.body = chat
+  ctx.status = 201
+}))
+
+router.patch('chats.member.leave', '/leave/:id', async ctx => Safely.Do(ctx, async (ctx) => {
+  const user = await Safely.GetCurrentUser(ctx)
+  await Safely.LeaveChat(ctx, user, ctx.params.id)
+  ctx.status = 204
+}))
+
 module.exports = router
