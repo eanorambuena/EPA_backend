@@ -208,7 +208,7 @@ Response:
 ```
 # Profile
 ## Get all profiles
-Puedes encontrar todos los usuarios registrados utilizando /profiles endpoint.
+Puedes encontrar todos los profiles registrados utilizando /profiles endpoint.
 ```
 [GET] https://epa-backend-1.onrender.com/profiles
 ```
@@ -303,3 +303,115 @@ Response:
     "updatedAt": "2024-06-28T23:20:37.746Z"
 }
 ```
+
+## Contacts
+# Get all contacts
+Puedes encontrar todos los contacts registrados utilizando /contacts endpoint.
+```
+[GET] https://epa-backend-1.onrender.com/contacts
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "nickname": "Johnny",
+        "userBase": 1,
+        "userContact": 2,
+        "createdAt": "2024-06-25T21:17:14.124Z",
+        "updatedAt": "2024-06-25T21:17:14.124Z"
+    },
+    // ...
+]
+```
+# Get a single contact
+Puedes encontrar un determinado contacto agregando <id> como parámetro: /profiles/id.
+```
+[GET] https://epa-backend-1.onrender.com/profiles/1
+```
+Response:
+```
+{
+    "id": 1,
+    "nickname": "Johnny",
+    "userBase": 1,
+    "userContact": 2,
+    "createdAt": "2024-06-25T21:17:14.124Z",
+    "updatedAt": "2024-06-25T21:17:14.124Z"
+}
+```
+# Get all the contacts of a specific user
+Puedes encontrar todos los contactos de un usuario en esepecífico utilizando el endpoint /contacts/user/userId.
+```
+[GET] https://epa-backend-1.onrender.com/contacts/user/2
+```
+Response:
+```
+[
+    {
+        "id": 3,
+        "nickname": "Gold digger",
+        "userBase": 2,
+        "userContact": "+56944445678",
+        "createdAt": "2024-06-25T21:17:14.124Z",
+        "updatedAt": "2024-06-25T21:17:14.124Z"
+    },
+    // ...
+]
+```
+# Create a contact
+Para crear un contact debemos utilizar /contacts endpoint con el método POST. Cabe recalcar que el número de telefono (userContact) es el que asocia el contacto con el usuario y su respectiva id.
+```
+[POST] https://epa-backend-1.onrender.com/contacts
+```
+Request:
+```
+{
+    "nickname": "ContactTest",
+    "userBase": 2,
+    "userContact": "+56912345559"
+}
+```
+Responde:
+```
+{
+    "id": 6,
+    "userBase": 1,
+    "userContact": 9,
+    "nickname": "ContactTest",
+    "updatedAt": "2024-06-28T23:53:42.795Z",
+    "createdAt": "2024-06-28T23:53:42.795Z"
+}
+```
+# Update a contact
+Puedes actualizar la información de un contact con el endpoint contacts/contactId, donde ContactId será la id del contacto a actualizar.
+```
+[PUT] https://epa-backend-1.onrender.com/contacts/6
+```
+Request:
+```
+{
+    "nickname": "ContactTestModificated"
+}
+```
+Response:
+```
+{
+    "id": 6,
+    "nickname": "ContactTestModificated",
+    "userBase": 1,
+    "userContact": 9,
+    "createdAt": "2024-06-28T23:53:42.795Z",
+    "updatedAt": "2024-06-28T23:58:09.875Z"
+}
+```
+# Delete a contact
+Para eliminar un usuario debes agregar id como parámetro: /contacts/id. Donde id será la id del contact a eliminar (parametro id del body, no condunfir con userBase o userContact).
+```
+[DELETE] https://epa-backend-1.onrender.com/contacts/6
+```
+Response:
+```
+
+```
+
