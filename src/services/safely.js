@@ -38,6 +38,7 @@ module.exports = class Safely {
 
   static async GetChatMembers(ctx, chatId) {
     const chat = await Safely.GetChat(ctx, chatId)
+    const user = await Safely.GetCurrentUser(ctx)
 
     if (!chat) {
       throw new ItemNotFoundError('Chat')
