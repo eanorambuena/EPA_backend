@@ -9,6 +9,8 @@ DB_USERNAME = epaowner
 DB_PASSWORD = epapassword
 DB_NAME = epachat
 DB_HOST = 'localhost'
+JWT_SECRET = un_dia_vi_una_vaca_sin_cola_vestida_de_uniforme
+FRONTEND_URL = https://epachat.netlify.app/
 ```
 Una vez realizado esto, debemos entrar a postgresql con el superusuario por defecto:
 ```
